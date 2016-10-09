@@ -249,7 +249,9 @@ model &lt;- randomForest(classe ~ ., data=training)</code></pre>
 <h2>Results</h2>
 <p>The following section presents the accuracy of the predictor, and the evaluation on the validation and test sets.</p>
 <pre class="r"><code>accuracy &lt;-c(as.numeric(predict(model,newdata=validating[,-ncol(validating)])==validating$classe))
-accuracy &lt;-sum(accuracy)*100/nrow(validating)</code></pre>
+accuracy &lt;-sum(accuracy)*100/nrow(validating)
+print(accuracy)</code></pre>
+<pre><code>## [1] 99.88529</code></pre>
 <p><strong>Ammending Test Set</strong></p>
 <pre class="r"><code>testing &lt;- testing[ , Keep] # Keep the same columns of testing dataset
 testing &lt;- testing[,-ncol(testing)] # Remove the problem ID
