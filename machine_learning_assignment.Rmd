@@ -1,0 +1,118 @@
+---
+title: "Assignment Practical Machine Learning"
+author: "Herminio Vazquez"
+date: "08/10/2016"
+output: html_document
+---
+
+## Introduction
+
+This is the final assignment in the __Practical Machine Learning__ Course in Cousera during the Autum (Northern Hemisphere) of 2016. It encloses the final work dedicated to apply the concepts learnt assoaciated to machine learning routines.
+
+The submission includes a prediction to determine the class of exercise realized by a group of individuals, through the metrics collected via wearable devices. Such metrics are result of performing specific classes of exercises and evaluating their form and correctness. The outcome of this essay is the prediction results obtained after composing a model in a training set and obtaining the predictions in 20 examples in the test set.
+
+### Classes
+The data set evaluate 5 classes: 
+
+1. sitting-down
+2. standing-up
+3. standing
+4. walking
+5. sitting
+
+collected on 8 hours of activities of 4 healthy subjects.
+
+```{r message=FALSE}
+# Loading Libraries
+library(knitr)
+library(caret)
+library(randomForest)
+library(RCurl)
+library(xtable)
+```
+
+## Data Preparation
+```{r cache=TRUE}
+# Loading data sets
+training_url <- getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+in_train  <- read.csv(text = training_url, header=TRUE, sep=",", na.strings=c("NA","","#DIV/0!"))
+
+testing_url <- getURL("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
+testing  <- read.csv(text = testing_url, header=TRUE, sep=",", na.strings=c("NA","","#DIV/0!"))
+```
+
+### EDA
+
+Let's explore the data and understand measurements, dimensions and variability
+
+```{r}
+names(in_train)
+dim(in_train)
+
+# Removing first column as it has only row ids
+in_train$X <- NULL
+testing$X <- NULL
+```
+
+## Model
+Creating a classification model with labels on `training$classe` for the outcome predictor. The split for the training set is **80%** for the training and **20%** for the testing inside the training data set, later on the testing is used for validation.
+
+```{r}
+# Using the training dataset to form an extra validation set
+in_train_part <- createDataPartition(y = in_train$classe, p=.60, list=FALSE)
+training <- in_train[in_train_part,]
+validating <- in_train[-in_train_part,]
+
+# Various columns have multiple NA's therefore we will center in columns with data
+Keep <- c((colSums(!is.na(training[,-ncol(training)])) >= 0.6*nrow(training)))
+training   <-  training[,Keep]
+validating <- validating[,Keep]
+
+# Dimensions of training and testing sets
+dim(training)
+dim(validating)
+```
+
+Generation of a **Random Forest** classifier for the metrics
+
+```{r}
+# Creation a RandomForrest Model
+model <- randomForest(classe ~ ., data=training)
+```
+
+Print out the confusion matrix for the random forest
+```{r}
+confusionMatrix(predict(model,newdata=validating[,-ncol(validating)]),validating$classe)
+```
+
+## Results
+
+The following section presents the accuracy of the predictor, and the evaluation on the validation and test sets.
+
+```{r}
+accuracy <-c(as.numeric(predict(model,newdata=validating[,-ncol(validating)])==validating$classe))
+accuracy <-sum(accuracy)*100/nrow(validating)
+```
+
+**Ammending Test Set**
+```{r}
+testing <- testing[ , Keep] # Keep the same columns of testing dataset
+testing <- testing[,-ncol(testing)] # Remove the problem ID
+
+# Apply the Same Transformations and Coerce Testing Dataset
+# Coerce testing dataset to same class and strucuture of training dataset 
+testing <- rbind(training[100, -59] , testing) 
+# Apply the ID Row to row.names and 100 for dummy row from testing dataset 
+row.names(testing) <- c(100, 1:20)
+```
+
+## Predictions
+
+This is the outcome of this classification exercise for the 20 observations available in the test set
+
+```{r}
+
+predictions <- predict(model,newdata=testing[-1,])
+print(predictions)
+
+```
