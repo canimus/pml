@@ -236,6 +236,11 @@ The following section presents the accuracy of the predictor, and the evaluation
 ```r
 accuracy <-c(as.numeric(predict(model,newdata=validating[,-ncol(validating)])==validating$classe))
 accuracy <-sum(accuracy)*100/nrow(validating)
+print(accuracy)
+```
+
+```
+## [1] 99.89804
 ```
 
 **Ammending Test Set**
