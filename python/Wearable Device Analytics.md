@@ -62,7 +62,7 @@ sb.heatmap(pd.isnull(training), xticklabels=False, yticklabels=False, cbar=True)
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1175eb400>
+    <matplotlib.axes._subplots.AxesSubplot at 0x114feaba8>
 
 
 
@@ -79,7 +79,7 @@ sb.heatmap(pd.isnull(testing), xticklabels=False, yticklabels=False, cbar=True)
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1175ca160>
+    <matplotlib.axes._subplots.AxesSubplot at 0x108b86978>
 
 
 
@@ -171,7 +171,7 @@ sb.heatmap(training[training.columns[list(range(52))]], xticklabels=False, ytick
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x117645780>
+    <matplotlib.axes._subplots.AxesSubplot at 0x114fc9860>
 
 
 
@@ -222,7 +222,7 @@ sb.heatmap(confusion_matrix(y_test, y_est, labels=list(np.unique(y_est))), annot
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x1194d0160>
+    <matplotlib.axes._subplots.AxesSubplot at 0x108b2bda0>
 
 
 
@@ -232,27 +232,34 @@ sb.heatmap(confusion_matrix(y_test, y_est, labels=list(np.unique(y_est))), annot
 
 
 ```python
-accuracy_score(y_test, y_est)
+acc = accuracy_score(y_test, y_est)
 ```
-
-
-
-
-    0.98980891719745223
-
-
 
 __Accuracy__
 
 
 ```python
-"{0:.2f}%".format(accuracy_score(y_test, y_est)*100)
+acc*100
 ```
 
 
 
 
-    '98.83%'
+    98.70063694267516
+
+
+
+__Error__
+
+
+```python
+(1-acc)*100
+```
+
+
+
+
+    1.2993630573248427
 
 
 
@@ -268,11 +275,11 @@ print(classification_report(y_test, y_est, target_names=target_names))
 
                  precision    recall  f1-score   support
     
-              A       0.99      1.00      0.99      1110
-              B       0.99      0.98      0.99       745
-              C       0.98      0.99      0.98       690
-              D       0.99      0.97      0.98       666
-              E       1.00      0.99      1.00       714
+              A       0.99      1.00      0.99      1134
+              B       0.99      0.98      0.99       754
+              C       0.98      0.98      0.98       688
+              D       0.97      0.98      0.98       644
+              E       1.00      0.98      0.99       705
     
     avg / total       0.99      0.99      0.99      3925
     
@@ -315,8 +322,3 @@ list(y_pred)
      'B']
 
 
-
-
-```python
-
-```
